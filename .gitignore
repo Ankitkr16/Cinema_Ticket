@@ -1,0 +1,53 @@
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.cache/
+
+# Streamlit Local Secrets (Keep example tracked)
+.streamlit/secrets.toml
+!.streamlit/secrets.toml.example
+!.streamlit/config.toml
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+
+# IDE & OS Artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.log
+
+# Explicitly ensure required ML artifacts and data files are tracked
+!models/*.joblib
+!models/*.json
+!data/raw/cinema_shows_raw.csv
+!data/raw/dataset_metadata.json
+!data/processed/*.csv
+!reports/figures/*.png
+!notebooks/*.ipynb
+

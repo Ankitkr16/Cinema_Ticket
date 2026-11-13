@@ -1,0 +1,78 @@
+{
+    "best_model_name": "Gradient Boosting",
+    "model_type": "gradient_boosting",
+    "validation_metrics": {
+        "mae": 10.95,
+        "rmse": 14.18,
+        "wape_pct": 11.96,
+        "capacity_violations": 0,
+        "clamped_mae": 10.95,
+        "clamped_rmse": 14.18,
+        "clamped_wape_pct": 11.96
+    },
+    "validation_comparison": {
+        "Baseline": {
+            "mae": 33.36,
+            "rmse": 38.61,
+            "wape_pct": 36.44,
+            "capacity_violations": 0,
+            "clamped_mae": 33.36,
+            "clamped_rmse": 38.61,
+            "clamped_wape_pct": 36.44
+        },
+        "Random Forest": {
+            "mae": 12.4,
+            "rmse": 16.65,
+            "wape_pct": 13.55,
+            "capacity_violations": 0,
+            "clamped_mae": 12.4,
+            "clamped_rmse": 16.65,
+            "clamped_wape_pct": 13.55
+        },
+        "Gradient Boosting": {
+            "mae": 10.95,
+            "rmse": 14.18,
+            "wape_pct": 11.96,
+            "capacity_violations": 0,
+            "clamped_mae": 10.95,
+            "clamped_rmse": 14.18,
+            "clamped_wape_pct": 11.96
+        }
+    },
+    "features": {
+        "numerical": [
+            "screen_capacity",
+            "ticket_price",
+            "days_since_release",
+            "historical_movie_demand",
+            "historical_weekday_demand",
+            "historical_time_slot_demand",
+            "show_hour",
+            "is_weekend"
+        ],
+        "categorical": [
+            "genre",
+            "weekday",
+            "time_slot"
+        ],
+        "target": "tickets_sold"
+    },
+    "training_data_summary": {
+        "train_records": 1819,
+        "train_date_range": [
+            "2026-01-01",
+            "2026-04-01"
+        ],
+        "validation_records": 391,
+        "validation_date_range": [
+            "2026-04-01",
+            "2026-04-21"
+        ]
+    },
+    "model_hyperparameters": {
+        "n_estimators": 160,
+        "max_depth": 5,
+        "min_samples_split": 5,
+        "random_state": 42
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "dataset_type": "Synthetic Cinema Show-Level Dataset",
+    "documentation": "Generated synthetically with realistic demand dynamics, showtime effects, screen constraints, and zero data leakage.",
+    "random_seed": 42,
+    "total_records": 2600,
+    "date_range": [
+        "2026-01-01",
+        "2026-05-10"
+    ],
+    "unique_movies": 20,
+    "columns": [
+        "show_id",
+        "movie_id",
+        "movie_name",
+        "show_date",
+        "show_time",
+        "weekday",
+        "screen_capacity",
+        "ticket_price",
+        "days_since_release",
+        "genre",
+        "historical_movie_demand",
+        "historical_weekday_demand",
+        "historical_time_slot_demand",
+        "tickets_sold"
+    ],
+    "cold_start_records_count": 20,
+    "target_variable": "tickets_sold",
+    "screen_capacities": [
+        100,
+        160,
+        220,
+        300
+    ],
+    "created_at": "2026-11-13T21:41:35.483736"
+}

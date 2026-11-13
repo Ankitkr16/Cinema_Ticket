@@ -1,0 +1,82 @@
+{
+    "test_records_count": 390,
+    "test_date_range": [
+        "2026-04-21",
+        "2026-05-10"
+    ],
+    "model_comparison": {
+        "Baseline": {
+            "mae": 31.35,
+            "rmse": 37.53,
+            "wape_pct": 32.19,
+            "capacity_violations": 0,
+            "clamped_mae": 31.35,
+            "clamped_rmse": 37.53,
+            "clamped_wape_pct": 32.19
+        },
+        "Random Forest": {
+            "mae": 14.75,
+            "rmse": 19.51,
+            "wape_pct": 15.15,
+            "capacity_violations": 0,
+            "clamped_mae": 14.75,
+            "clamped_rmse": 19.51,
+            "clamped_wape_pct": 15.15,
+            "raw_capacity_violations": 0,
+            "clamped_capacity_violations": 0
+        },
+        "Gradient Boosting": {
+            "mae": 12.29,
+            "rmse": 15.88,
+            "wape_pct": 12.62,
+            "capacity_violations": 0,
+            "clamped_mae": 12.29,
+            "clamped_rmse": 15.88,
+            "clamped_wape_pct": 12.62,
+            "raw_capacity_violations": 1,
+            "clamped_capacity_violations": 0
+        }
+    },
+    "best_model_name": "Gradient Boosting",
+    "cold_start_analysis": {
+        "unseen_or_new_movies": {
+            "count": 344,
+            "baseline": {
+                "mae": 30.29,
+                "rmse": 36.6,
+                "wape_pct": 29.1
+            },
+            "best_model": {
+                "mae": 12.67,
+                "rmse": 16.28,
+                "wape_pct": 12.17
+            }
+        },
+        "low_data_movies": {
+            "count": 18,
+            "baseline": {
+                "mae": 28.19,
+                "rmse": 30.23,
+                "wape_pct": 70.0
+            },
+            "best_model": {
+                "mae": 10.25,
+                "rmse": 13.51,
+                "wape_pct": 25.44
+            }
+        },
+        "established_movies": {
+            "count": 28,
+            "baseline": {
+                "mae": 46.45,
+                "rmse": 50.67,
+                "wape_pct": 89.52
+            },
+            "best_model": {
+                "mae": 9.0,
+                "rmse": 11.81,
+                "wape_pct": 17.35
+            }
+        }
+    }
+}
