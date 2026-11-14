@@ -210,8 +210,9 @@ The architecture is decoupled into a **FastAPI backend** hosted on [Render](http
 6. Set **Health Check Path** to `/health`.
 7. Click **Create Web Service**.
    * *Alternative (1-Click Blueprint):* Render will automatically detect `render.yaml` in the repo root if you choose **New + > Blueprint**.
-8. Once deployed, copy your public service URL (e.g., `https://cinecast-ai-api.onrender.com`).
-   * Test health check: `curl https://cinecast-ai-api.onrender.com/health`
+8. Once deployed, copy your public service URL:
+   * Production API: `https://cinecast-api.onrender.com`
+   * Test health check: `curl https://cinecast-api.onrender.com/health`
 
 ---
 
@@ -220,11 +221,13 @@ The architecture is decoupled into a **FastAPI backend** hosted on [Render](http
 1. Log into [Streamlit Community Cloud](https://share.streamlit.io).
 2. Click **New app**.
 3. Select your GitHub repository, branch (`main`), and set the main file path:
+   * **Repository:** `Ankitkr16/Cinema_Ticket`
+   * **Branch:** `main`
    * **Main file path:** `app/streamlit_app.py`
 4. Click **Advanced settings** (or go to **App Settings > Secrets** after creating):
 5. Add the backend connection URL in the **Secrets** editor:
    ```toml
-   API_BASE_URL = "https://cinecast-ai-api.onrender.com"
+   API_BASE_URL = "https://cinecast-api.onrender.com"
    ```
 6. Click **Deploy!**
 7. Your interactive dashboard is now live (e.g., `https://cinecast-ai.streamlit.app`).
