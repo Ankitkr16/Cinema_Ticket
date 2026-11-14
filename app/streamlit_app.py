@@ -291,7 +291,6 @@ with st.sidebar:
 # ==============================================================================
 st.markdown("""
 <div class="page-header">
-    <div class="tech-pill">⚡ Scikit-Learn • Chronological Split • Capacity Clamping • FastAPI</div>
     <div class="page-title">Cinema Ticket Demand Forecasting</div>
     <div class="page-subtitle">
         Predicting individual show-level ticket sales and auditorium seat occupancy to support cinema management with screen allocation and operational staffing.
