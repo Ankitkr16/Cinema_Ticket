@@ -48,9 +48,10 @@ CUSTOM_CSS = """
     
     /* Top Header */
     .page-header {
-        padding: 0.2rem 0 1.2rem 0;
+        padding: 0.5rem 0 1.2rem 0;
         border-bottom: 1px solid #1e293b;
         margin-bottom: 1.2rem;
+        margin-top: 0.5rem;
     }
     
     .tech-pill {
@@ -145,9 +146,9 @@ CUSTOM_CSS = """
         border: 1px solid #3b82f6;
     }
     
-    /* Streamlit Padding Fix */
+    /* Streamlit Padding Fix: Ensure comfortable clearance below Streamlit's fixed header */
     .block-container {
-        padding-top: 1.5rem;
+        padding-top: 4.5rem !important;
         padding-bottom: 3rem;
     }
 </style>
