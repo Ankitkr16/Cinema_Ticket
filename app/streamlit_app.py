@@ -55,14 +55,15 @@ CUSTOM_CSS = """
     
     .tech-pill {
         display: inline-block;
-        background: #1e293b;
-        color: #94a3b8;
-        border: 1px solid #334155;
-        padding: 3px 10px;
-        border-radius: 6px;
-        font-size: 0.78rem;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
+        background: rgba(99, 102, 241, 0.22);
+        color: #e0e7ff;
+        border: 1px solid rgba(129, 140, 248, 0.65);
+        padding: 5px 14px;
+        border-radius: 9999px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.6rem;
     }
     
     .page-title {
@@ -289,7 +290,7 @@ with st.sidebar:
 # ==============================================================================
 st.markdown("""
 <div class="page-header">
-    <div class="tech-pill">Scikit-Learn • Chronological Split • Capacity Clamping • FastAPI</div>
+    <div class="tech-pill">⚡ Scikit-Learn • Chronological Split • Capacity Clamping • FastAPI</div>
     <div class="page-title">Cinema Ticket Demand Forecasting</div>
     <div class="page-subtitle">
         Predicting individual show-level ticket sales and auditorium seat occupancy to support cinema management with screen allocation and operational staffing.
@@ -362,6 +363,56 @@ if nav == "Dashboard":
         st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+    
+    # --------------------------------------------------------------------------
+    # INTERACTIVE ANALYTICS CONTROLS (DYNAMIC GRAPH SLICING)
+    # --------------------------------------------------------------------------
+    with st.container(border=True):
+        st.markdown("**🎯 Interactive Analytics Controls: Slice & Update Graphs**")
+        st.caption("Select any Genre, Auditorium Screen, or Time Window below. The Demand Trend and Weekday vs. Weekend charts will instantly recalculate and update in real-time.")
+        
+        flt1, flt2, flt3 = st.columns([1.5, 1.5, 1.2])
+        
+        with flt1:
+            genre_list = ["All Genres"] + sorted(raw_df["genre"].unique().tolist())
+            sel_genre = st.selectbox("Movie Genre Filter", genre_list, index=0)
+            
+        with flt2:
+            screen_map = {
+                "All Auditoriums (4 Screens)": None,
+                "Screen 1 (300 Seats - Grand)": 300,
+                "Screen 2 (220 Seats - Premium)": 220,
+                "Screen 3 (160 Seats - Standard)": 160,
+                "Screen 4 (100 Seats - Intimate)": 100
+            }
+            sel_screen_name = st.selectbox("Auditorium Capacity Filter", list(screen_map.keys()), index=0)
+            sel_screen_cap = screen_map[sel_screen_name]
+            
+        with flt3:
+            sel_window = st.selectbox("Historical Time Window", ["Full 130 Days (Jan 1 – May 10)", "First 65 Days", "Recent 65 Days"], index=0)
+            
+        # Apply filtering dynamically
+        plot_df = raw_df.copy()
+        if sel_genre != "All Genres":
+            plot_df = plot_df[plot_df["genre"] == sel_genre]
+        if sel_screen_cap is not None:
+            plot_df = plot_df[plot_df["screen_capacity"] == sel_screen_cap]
+        all_unique_dates = sorted(plot_df["show_date"].unique())
+        if sel_window == "First 65 Days" and len(all_unique_dates) > 0:
+            cutoff_date = all_unique_dates[min(64, len(all_unique_dates) - 1)]
+            plot_df = plot_df[plot_df["show_date"] <= cutoff_date]
+        elif sel_window == "Recent 65 Days" and len(all_unique_dates) > 0:
+            cutoff_date = all_unique_dates[max(0, len(all_unique_dates) - 65)]
+            plot_df = plot_df[plot_df["show_date"] >= cutoff_date]
+            
+        if len(plot_df) == 0:
+            st.warning("No historical shows match the selected combination. Resetting to full dataset.")
+            plot_df = raw_df.copy()
+            
+        filter_status = f"📊 Active Slice: **{len(plot_df):,} shows** | Average Demand: **{plot_df['tickets_sold'].mean():.1f} tickets/show** | Genre: **{sel_genre}** | Auditorium: **{sel_screen_name}**"
+        st.markdown(f"<div style='font-size:0.83rem; color:#94a3b8; padding-top:4px;'>{filter_status}</div>", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("#### Visual Analytics & Demand Patterns")
     
     # --------------------------------------------------------------------------
@@ -371,7 +422,7 @@ if nav == "Dashboard":
     
     with c1:
         st.markdown("**1. Ticket Demand Trend Over Time**")
-        daily_trend = raw_df.groupby("show_date")["tickets_sold"].mean().reset_index().sort_values("show_date")
+        daily_trend = plot_df.groupby("show_date")["tickets_sold"].mean().reset_index().sort_values("show_date")
         daily_trend["rolling_7"] = daily_trend["tickets_sold"].rolling(7, min_periods=1).mean()
         
         # Explicit native Python lists avoid Plotly 6 binary bdata serialization
@@ -404,12 +455,12 @@ if nav == "Dashboard":
             plot_bgcolor="#0f172a",
             margin=dict(l=40, r=20, t=10, b=40),
             height=340,
-            xaxis=dict(title="Show Date (130 Days: Jan 1 – May 10, 2026)", showgrid=True, gridcolor="#1e293b"),
-            yaxis=dict(title="Average Tickets Sold per Show", range=[0, 190], showgrid=True, gridcolor="#1e293b"),
+            xaxis=dict(title=f"Show Date ({len(x_dates)} Days Plotted)", showgrid=True, gridcolor="#1e293b"),
+            yaxis=dict(title="Average Tickets Sold per Show", range=[0, max(200, int(max(y_daily) * 1.15) if y_daily else 200)], showgrid=True, gridcolor="#1e293b"),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig_trend, use_container_width=True, theme=None)
-        st.caption(f"Actual daily mean ticket sales ({len(x_dates)} consecutive calendar days) showing cyclical weekend surges (peaks up to {max(y_daily):.1f} tickets) and weekday troughs ({min(y_daily):.1f} tickets).")
+        st.caption(f"Showing {len(plot_df):,} shows. Daily mean ticket sales range from {min(y_daily):.1f} to {max(y_daily):.1f} tickets.")
 
     # --------------------------------------------------------------------------
     # CHART 2: WEEKDAY VS WEEKEND DEMAND
@@ -417,15 +468,13 @@ if nav == "Dashboard":
     with c2:
         st.markdown("**2. Weekday vs. Weekend Demand Comparison**")
         
-        # Calculate consistent weekday vs weekend aggregations directly from raw_df
-        mon_thu_df = raw_df[raw_df["weekday"].isin(["Monday", "Tuesday", "Wednesday", "Thursday"])]
-        fri_sun_df = raw_df[raw_df["weekday"].isin(["Friday", "Saturday", "Sunday"])]
+        # Calculate consistent weekday vs weekend aggregations directly from plot_df
+        mon_thu_df = plot_df[plot_df["weekday"].isin(["Monday", "Tuesday", "Wednesday", "Thursday"])]
+        fri_sun_df = plot_df[plot_df["weekday"].isin(["Friday", "Saturday", "Sunday"])]
         
-        wk_avg = float(mon_thu_df["tickets_sold"].mean())
-        we_avg = float(fri_sun_df["tickets_sold"].mean())
-        wk_std = float(mon_thu_df["tickets_sold"].std())
-        we_std = float(fri_sun_df["tickets_sold"].std())
-        surge_calc = ((we_avg - wk_avg) / wk_avg) * 100.0
+        wk_avg = float(mon_thu_df["tickets_sold"].mean()) if len(mon_thu_df) > 0 else 0.0
+        we_avg = float(fri_sun_df["tickets_sold"].mean()) if len(fri_sun_df) > 0 else 0.0
+        surge_calc = (((we_avg - wk_avg) / wk_avg) * 100.0) if wk_avg > 0 else 0.0
         
         tab_agg, tab_days = st.tabs(["Aggregate (Weekday vs Weekend)", "Daily Breakdown (Mon–Sun)"])
         
@@ -447,13 +496,13 @@ if nav == "Dashboard":
                 margin=dict(l=40, r=20, t=10, b=40),
                 height=280,
                 xaxis=dict(title=""),
-                yaxis=dict(title="Average Tickets Sold per Show", range=[0, 155], showgrid=True, gridcolor="#1e293b")
+                yaxis=dict(title="Average Tickets Sold per Show", range=[0, max(160, int(max(wk_avg, we_avg) * 1.25) if max(wk_avg, we_avg) > 0 else 160)], showgrid=True, gridcolor="#1e293b")
             )
             st.plotly_chart(fig_agg, use_container_width=True, theme=None)
             
         with tab_days:
             weekday_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            weekday_stats = raw_df.groupby("weekday")["tickets_sold"].agg(["mean", "std", "count"]).reindex(weekday_order).reset_index()
+            weekday_stats = plot_df.groupby("weekday")["tickets_sold"].agg(["mean", "std", "count"]).reindex(weekday_order).fillna(0).reset_index()
             
             day_names = list(weekday_order)
             day_means = [round(float(v), 1) for v in weekday_stats["mean"]]
@@ -475,11 +524,11 @@ if nav == "Dashboard":
                 margin=dict(l=40, r=20, t=10, b=40),
                 height=280,
                 xaxis=dict(title="Day of Week"),
-                yaxis=dict(title="Average Tickets Sold per Show", range=[0, 160], showgrid=True, gridcolor="#1e293b")
+                yaxis=dict(title="Average Tickets Sold per Show", range=[0, max(165, int(max(day_means) * 1.2) if day_means and max(day_means) > 0 else 165)], showgrid=True, gridcolor="#1e293b")
             )
             st.plotly_chart(fig_wk, use_container_width=True, theme=None)
             
-        st.caption(f"Actual ticket sales averages: Weekdays average {wk_avg:.1f} tickets vs. Weekends average {we_avg:.1f} tickets (+{surge_calc:.1f}% surge).")
+        st.caption(f"Filtered demand ({len(plot_df):,} shows): Weekdays average {wk_avg:.1f} tickets vs. Weekends average {we_avg:.1f} tickets (+{surge_calc:.1f}% surge).")
 
     st.markdown("<br>", unsafe_allow_html=True)
     c3, c4 = st.columns(2)
