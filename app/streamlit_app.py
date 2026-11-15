@@ -244,7 +244,7 @@ elif "baseline_tickets" not in test_df.columns:
 def check_api_status():
     """Checks whether the FastAPI service is reachable."""
     try:
-        r = requests.get(f"{API_BASE_URL}/health", timeout=2.0)
+        r = requests.get(f"{API_BASE_URL}/health", timeout=6.0)
         if r.status_code == 200:
             return True, r.json()
     except Exception:
@@ -282,10 +282,13 @@ with st.sidebar:
     else:
         st.markdown(
             '<div style="color:#f87171; font-size:0.85rem; font-weight:600;">'
-            '○ FastAPI Offline (Using Local Fallback)</div>',
+            '○ FastAPI Sleeping (Local Fallback Ready)</div>',
             unsafe_allow_html=True
         )
         st.caption(f"Target: `{API_BASE_URL}`")
+        st.caption("ℹ️ *Render free tier sleeps after 15m idle. Takes ~30s to spin up.*")
+        if st.button("🔄 Wake Up / Refresh", use_container_width=True):
+            st.rerun()
         
     st.markdown("---")
     st.markdown("**Dataset & Pipeline Summary**")
@@ -862,7 +865,7 @@ elif nav == "Demand Prediction":
         pred_response = None
         # Execute Real Prediction via FastAPI Backend
         try:
-            r = requests.post(f"{API_BASE_URL}/predict", json=payload, timeout=5.0)
+            r = requests.post(f"{API_BASE_URL}/predict", json=payload, timeout=12.0)
             if r.status_code == 200:
                 pred_response = r.json()
             else:
